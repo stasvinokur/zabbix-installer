@@ -19,13 +19,9 @@ echo "Detected OS: $OS_NAME $OS_VERSION"
 # We only handle Ubuntu or Debian in this script
 if [[ "$OS_NAME" == "ubuntu" ]]; then
   # Ubuntu logic
-  # In many cases we only need the major part (like 20 or 22), but often 20.04 is used literally.
-  # Here we keep the full version string for matching if it's 20.04, 22.04, etc.
   DISTRO_ID="ubuntu${OS_VERSION}"
 elif [[ "$OS_NAME" == "debian" ]]; then
   # Debian logic
-  # Usually we only need the major version (e.g. 11 or 12).
-  # If your system is 12.1, we can just use "12" for searching the package.
   DEBIAN_MAJOR=$(echo "$OS_VERSION" | cut -d '.' -f1)
   DISTRO_ID="debian${DEBIAN_MAJOR}"
 else
@@ -60,6 +56,9 @@ sudo dpkg -i "${ZABBIX_RELEASE_DEB}" || {
   echo "ERROR: Failed to install ${ZABBIX_RELEASE_DEB} via dpkg"
   exit 1
 }
+
+# Remove the downloaded .deb file if the installation was successful.
+rm -f "${ZABBIX_RELEASE_DEB}"
 
 echo "Running apt-get update..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
